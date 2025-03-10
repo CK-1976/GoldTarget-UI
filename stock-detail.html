@@ -7,7 +7,188 @@
     <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <style>
-        /* 样式保持不变 */
+        body {
+            font-family: 'PingFang SC', 'Microsoft YaHei', sans-serif;
+            background-color: #f8f9fa;
+            margin: 0;
+            padding: 0;
+            color: #333;
+        }
+        .status-bar {
+            height: 44px;
+            background-color: #ffffff;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 16px;
+            color: #333;
+            font-size: 12px;
+        }
+        .card {
+            background: white;
+            border-radius: 16px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+            padding: 16px;
+            margin-bottom: 16px;
+        }
+        .tab-bar {
+            display: flex;
+            justify-content: space-around;
+            background: white;
+            padding: 12px 0;
+            position: fixed;
+            bottom: 0;
+            width: 100%;
+            border-top: 1px solid #eee;
+            box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.05);
+        }
+        .tab-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            font-size: 12px;
+            color: #999;
+        }
+        .tab-item.active {
+            color: #ff7d34;
+        }
+        .tab-item i {
+            font-size: 22px;
+            margin-bottom: 4px;
+        }
+        .price-up {
+            color: #f5222d;
+        }
+        .price-down {
+            color: #52c41a;
+        }
+        .chart-container {
+            height: 250px;
+            width: 100%;
+            position: relative;
+            background: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="100%" height="100%" viewBox="0 0 100 50"><path d="M0,35 L5,33 L10,30 L15,32 L20,31 L25,33 L30,25 L35,27 L40,28 L45,25 L50,20 L55,18 L60,15 L65,17 L70,18 L75,15 L80,10 L85,13 L90,12 L95,8 L100,5" fill="none" stroke="%23ff7d34" stroke-width="2"/></svg>') no-repeat;
+            background-size: 100% 100%;
+            margin-bottom: 20px;
+        }
+        .tabs {
+            display: flex;
+            border-bottom: 1px solid #eee;
+        }
+        .tab {
+            flex: 1;
+            text-align: center;
+            padding: 12px 0;
+            font-size: 14px;
+            color: #666;
+        }
+        .tab.active {
+            color: #ff7d34;
+            font-weight: bold;
+            position: relative;
+        }
+        .tab.active:after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 25%;
+            width: 50%;
+            height: 3px;
+            background: #ff7d34;
+            border-radius: 3px;
+        }
+        .data-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 10px;
+        }
+        .data-cell {
+            padding: 8px;
+            text-align: center;
+            border-right: 1px solid #f0f0f0;
+        }
+        .data-cell:last-child {
+            border-right: none;
+        }
+        .data-label {
+            font-size: 12px;
+            color: #999;
+            margin-bottom: 4px;
+        }
+        .data-value {
+            font-size: 14px;
+            font-weight: medium;
+        }
+        .time-selector {
+            display: flex;
+            margin-bottom: 15px;
+        }
+        .time-item {
+            flex: 1;
+            text-align: center;
+            padding: 6px 0;
+            font-size: 12px;
+            background: #f5f5f5;
+            color: #666;
+        }
+        .time-item:first-child {
+            border-top-left-radius: 4px;
+            border-bottom-left-radius: 4px;
+        }
+        .time-item:last-child {
+            border-top-right-radius: 4px;
+            border-bottom-right-radius: 4px;
+        }
+        .time-item.active {
+            background: #ff7d34;
+            color: white;
+        }
+        .news-item {
+            display: flex;
+            padding: 12px 0;
+            border-bottom: 1px solid #f0f0f0;
+        }
+        .news-item:last-child {
+            border-bottom: none;
+        }
+        .category-chip {
+            font-size: 10px;
+            background: #f0f7ff;
+            color: #1890ff;
+            padding: 2px 6px;
+            border-radius: 4px;
+            margin-right: 6px;
+        }
+        .chip-hot {
+            background: #fff2e8;
+            color: #fa541c;
+        }
+        .action-buttons {
+            display: flex;
+            justify-content: space-between;
+            padding: 12px 16px;
+            background: white;
+            position: fixed;
+            bottom: 0;
+            width: 100%;
+            box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.05);
+        }
+        .btn-action {
+            flex: 1;
+            text-align: center;
+            padding: 12px 0;
+            border-radius: 8px;
+            font-weight: bold;
+            margin: 0 6px;
+        }
+        .btn-follow {
+            background: #fff2e8;
+            color: #ff7d34;
+            border: 1px solid #ff7d34;
+        }
+        .btn-buy {
+            background: #ff7d34;
+            color: white;
+        }
     </style>
 </head>
 <body class="pb-24">
@@ -25,22 +206,164 @@
     
     <!-- 头部 -->
     <div class="bg-white p-4">
-        <!-- 头部内容 -->
+        <div class="flex items-center mb-2">
+            <a href="javascript:history.back()" class="mr-3">
+                <i class="fas fa-arrow-left"></i>
+            </a>
+            <div>
+                <h1 class="text-lg font-bold">中芯国际 (688981)</h1>
+                <p class="text-xs text-gray-500">上海 · 半导体</p>
+            </div>
+            <div class="ml-auto">
+                <button class="bg-gray-100 w-8 h-8 rounded-full flex items-center justify-center">
+                    <i class="fas fa-share-alt text-gray-500"></i>
+                </button>
+            </div>
+        </div>
+        
+        <div class="flex justify-between items-baseline">
+            <div>
+                <span class="text-2xl font-bold price-up">49.76</span>
+                <span class="text-sm price-up ml-2">+2.65 +5.63%</span>
+            </div>
+            <div class="text-xs text-gray-500">
+                今开：47.31 | 昨收：47.11
+            </div>
+        </div>
     </div>
     
     <!-- 价格图表 -->
     <div class="bg-white px-4 pb-4">
-        <!-- 价格图表内容 -->
+        <div class="time-selector">
+            <div class="time-item">分时</div>
+            <div class="time-item">日K</div>
+            <div class="time-item">周K</div>
+            <div class="time-item active">月K</div>
+            <div class="time-item">季K</div>
+            <div class="time-item">年K</div>
+        </div>
+        
+        <div class="chart-container"></div>
+        
+        <div class="data-grid">
+            <div class="data-cell">
+                <div class="data-label">最高</div>
+                <div class="data-value">50.93</div>
+            </div>
+            <div class="data-cell">
+                <div class="data-label">最低</div>
+                <div class="data-value">47.08</div>
+            </div>
+            <div class="data-cell">
+                <div class="data-label">成交量</div>
+                <div class="data-value">1238万</div>
+            </div>
+            <div class="data-cell">
+                <div class="data-label">成交额</div>
+                <div class="data-value">6.15亿</div>
+            </div>
+            <div class="data-cell">
+                <div class="data-label">市值</div>
+                <div class="data-value">396亿</div>
+            </div>
+            <div class="data-cell">
+                <div class="data-label">市盈率</div>
+                <div class="data-value">49.32</div>
+            </div>
+        </div>
     </div>
     
     <!-- 公司信息 -->
     <div class="card mt-3">
-        <!-- 公司信息内容 -->
+        <div class="tabs mb-4">
+            <div class="tab active">公司</div>
+            <div class="tab">财务</div>
+            <div class="tab">资讯</div>
+            <div class="tab">F10</div>
+        </div>
+        
+        <div>
+            <div class="mb-4">
+                <h3 class="text-base font-medium mb-2">公司简介</h3>
+                <p class="text-sm text-gray-600 leading-5">
+                    中芯国际集成电路制造有限公司（简称：中芯国际）是世界领先的集成电路晶圆代工企业之一，也是中国内地规模最大、技术最先进的集成电路晶圆代工企业。公司提供0.35微米到14纳米不同技术节点的晶圆代工与技术服务。
+                </p>
+            </div>
+            
+            <div class="mb-4">
+                <h3 class="text-base font-medium mb-2">基本信息</h3>
+                <div class="grid grid-cols-2 gap-2">
+                    <div>
+                        <p class="text-xs text-gray-500">所属行业</p>
+                        <p class="text-sm">半导体与设备</p>
+                    </div>
+                    <div>
+                        <p class="text-xs text-gray-500">主营业务</p>
+                        <p class="text-sm">集成电路晶圆代工</p>
+                    </div>
+                    <div>
+                        <p class="text-xs text-gray-500">上市日期</p>
+                        <p class="text-sm">2020-07-16</p>
+                    </div>
+                    <div>
+                        <p class="text-xs text-gray-500">总股本</p>
+                        <p class="text-sm">7.9亿股</p>
+                    </div>
+                    <div>
+                        <p class="text-xs text-gray-500">董事长</p>
+                        <p class="text-sm">高永岗</p>
+                    </div>
+                    <div>
+                        <p class="text-xs text-gray-500">注册资本</p>
+                        <p class="text-sm">175.33亿元</p>
+                    </div>
+                </div>
+            </div>
+            
+            <div>
+                <h3 class="text-base font-medium mb-2">相关资讯</h3>
+                
+                <div class="news-item">
+                    <div>
+                        <p class="text-sm mb-1">中芯国际第一季度业绩超预期，全球半导体复苏信号显现</p>
+                        <div class="flex items-center">
+                            <span class="category-chip chip-hot">财报</span>
+                            <span class="text-xs text-gray-400">3小时前</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="news-item">
+                    <div>
+                        <p class="text-sm mb-1">多家券商发布研报看好中芯国际，预计全年业绩有望持续改善</p>
+                        <div class="flex items-center">
+                            <span class="category-chip">研报</span>
+                            <span class="text-xs text-gray-400">昨天</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="news-item">
+                    <div>
+                        <p class="text-sm mb-1">中芯国际扩产计划提速，先进制程产能有望进一步释放</p>
+                        <div class="flex items-center">
+                            <span class="category-chip">公告</span>
+                            <span class="text-xs text-gray-400">3天前</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
     
     <!-- 底部操作按钮 -->
     <div class="action-buttons">
-        <!-- 底部操作按钮内容 -->
+        <button class="btn-action btn-follow">
+            <i class="fas fa-plus mr-1"></i> 加自选
+        </button>
+        <button class="btn-action btn-buy">
+            买入
+        </button>
     </div>
 </body>
 </html>

@@ -7,7 +7,177 @@
     <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <style>
-        /* 样式保持不变 */
+        body {
+            font-family: 'PingFang SC', 'Microsoft YaHei', sans-serif;
+            background-color: #f8f9fa;
+            margin: 0;
+            padding: 0;
+            color: #333;
+        }
+        .status-bar {
+            height: 44px;
+            background-color: #ffffff;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 16px;
+            color: #333;
+            font-size: 12px;
+        }
+        .card {
+            background: white;
+            border-radius: 16px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+            padding: 16px;
+            margin-bottom: 16px;
+        }
+        .tab-bar {
+            display: flex;
+            justify-content: space-around;
+            background: white;
+            padding: 12px 0;
+            position: fixed;
+            bottom: 0;
+            width: 100%;
+            border-top: 1px solid #eee;
+            box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.05);
+        }
+        .tab-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            font-size: 12px;
+            color: #999;
+        }
+        .tab-item.active {
+            color: #ff7d34;
+        }
+        .tab-item i {
+            font-size: 22px;
+            margin-bottom: 4px;
+        }
+        .portfolio-header {
+            background: linear-gradient(135deg, #ff7d34, #ff9a66);
+            color: white;
+            border-radius: 16px;
+            padding: 20px;
+            margin-bottom: 16px;
+        }
+        .portfolio-tabs {
+            display: flex;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 8px;
+            padding: 3px;
+            margin-bottom: 15px;
+        }
+        .portfolio-tab {
+            flex: 1;
+            text-align: center;
+            padding: 8px 0;
+            font-size: 14px;
+            border-radius: 6px;
+        }
+        .portfolio-tab.active {
+            background: white;
+            color: #ff7d34;
+            font-weight: 500;
+        }
+        .price-up {
+            color: #f5222d;
+        }
+        .price-down {
+            color: #52c41a;
+        }
+        .stock-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px 0;
+            border-bottom: 1px solid #f0f0f0;
+        }
+        .stock-item:last-child {
+            border-bottom: none;
+        }
+        .donut-chart {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            background: conic-gradient(
+                #ff7d34 0% 30%,
+                #1890ff 30% 55%,
+                #52c41a 55% 70%,
+                #722ed1 70% 85%,
+                #faad14 85% 100%
+            );
+            position: relative;
+        }
+        .donut-chart::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 70px;
+            height: 70px;
+            background: white;
+            border-radius: 50%;
+        }
+        .legend-item {
+            display: flex;
+            align-items: center;
+            margin-bottom: 8px;
+            font-size: 12px;
+        }
+        .legend-color {
+            width: 12px;
+            height: 12px;
+            border-radius: 2px;
+            margin-right: 8px;
+        }
+        .performance-chart {
+            height: 120px;
+            width: 100%;
+            position: relative;
+            background: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="100%" height="100%" viewBox="0 0 100 50"><path d="M0,40 L10,38 L20,35 L30,30 L40,32 L50,25 L60,20 L70,18 L80,15 L90,10 L100,5" fill="none" stroke="%23ff7d34" stroke-width="2"/></svg>') no-repeat;
+            background-size: 100% 100%;
+            margin: 15px 0;
+        }
+        .tabs {
+            display: flex;
+            border-bottom: 1px solid #eee;
+            margin-bottom: 16px;
+        }
+        .tab {
+            flex: 1;
+            text-align: center;
+            padding: 12px 0;
+            font-size: 14px;
+            color: #666;
+        }
+        .tab.active {
+            color: #ff7d34;
+            font-weight: bold;
+            position: relative;
+        }
+        .tab.active:after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 25%;
+            width: 50%;
+            height: 3px;
+            background: #ff7d34;
+            border-radius: 3px;
+        }
+        .btn-add {
+            background: #ff7d34;
+            color: white;
+            border-radius: 24px;
+            padding: 10px 0;
+            width: 100%;
+            text-align: center;
+            font-weight: bold;
+        }
     </style>
 </head>
 <body class="pb-20">
@@ -42,22 +212,146 @@
     <div class="p-4">
         <!-- 投资组合概览 -->
         <div class="portfolio-header">
-            <!-- 头部内容 -->
+            <div class="portfolio-tabs">
+                <div class="portfolio-tab">全部</div>
+                <div class="portfolio-tab active">A股</div>
+                <div class="portfolio-tab">港美股</div>
+            </div>
+            
+            <div class="flex justify-between items-center mb-3">
+                <div>
+                    <p class="text-sm opacity-80">总资产 (元)</p>
+                    <p class="text-2xl font-bold">128,560.42</p>
+                </div>
+                <div class="text-right">
+                    <p class="text-sm opacity-80">日收益</p>
+                    <p class="text-lg font-medium">+3,215.86 <span class="text-sm">+2.58%</span></p>
+                </div>
+            </div>
+            
+            <div class="flex justify-between items-center">
+                <div>
+                    <p class="text-sm opacity-80">总收益</p>
+                    <p class="text-lg font-medium">+18,560.42 <span class="text-sm">+16.85%</span></p>
+                </div>
+                <button class="bg-white bg-opacity-20 px-4 py-2 rounded-full text-sm">
+                    查看详情
+                </button>
+            </div>
         </div>
         
         <!-- 资产分布 -->
         <div class="card">
-            <!-- 资产分布内容 -->
+            <h3 class="font-bold mb-4">资产分布</h3>
+            
+            <div class="flex">
+                <div class="donut-chart mr-4"></div>
+                <div class="flex-1">
+                    <div class="legend-item">
+                        <div class="legend-color" style="background: #ff7d34;"></div>
+                        <div class="flex-1">半导体</div>
+                        <div>30%</div>
+                    </div>
+                    <div class="legend-item">
+                        <div class="legend-color" style="background: #1890ff;"></div>
+                        <div class="flex-1">新能源</div>
+                        <div>25%</div>
+                    </div>
+                    <div class="legend-item">
+                        <div class="legend-color" style="background: #52c41a;"></div>
+                        <div class="flex-1">消费</div>
+                        <div>15%</div>
+                    </div>
+                    <div class="legend-item">
+                        <div class="legend-color" style="background: #722ed1;"></div>
+                        <div class="flex-1">医药</div>
+                        <div>15%</div>
+                    </div>
+                    <div class="legend-item">
+                        <div class="legend-color" style="background: #faad14;"></div>
+                        <div class="flex-1">金融</div>
+                        <div>15%</div>
+                    </div>
+                </div>
+            </div>
         </div>
         
         <!-- 收益走势 -->
         <div class="card">
-            <!-- 收益走势内容 -->
+            <h3 class="font-bold mb-4">收益走势</h3>
+            <div class="performance-chart"></div>
+            <div class="flex justify-between text-xs text-gray-500">
+                <span>3月1日</span>
+                <span>3月5日</span>
+                <span>3月10日</span>
+            </div>
         </div>
         
         <!-- 持仓明细 -->
         <div class="card">
-            <!-- 持仓明细内容 -->
+            <div class="tabs">
+                <div class="tab active">持仓</div>
+                <div class="tab">交易</div>
+            </div>
+            
+            <div class="stock-item">
+                <div>
+                    <p class="font-medium">中芯国际</p>
+                    <p class="text-xs text-gray-500">688981 | 200股</p>
+                </div>
+                <div class="text-right">
+                    <p class="font-medium price-up">49.76</p>
+                    <p class="text-xs price-up">+5.63% | 盈亏 +2,389</p>
+                </div>
+            </div>
+            
+            <div class="stock-item">
+                <div>
+                    <p class="font-medium">比亚迪</p>
+                    <p class="text-xs text-gray-500">002594 | 100股</p>
+                </div>
+                <div class="text-right">
+                    <p class="font-medium price-up">238.65</p>
+                    <p class="text-xs price-up">+3.17% | 盈亏 +4,283</p>
+                </div>
+            </div>
+            
+            <div class="stock-item">
+                <div>
+                    <p class="font-medium">贵州茅台</p>
+                    <p class="text-xs text-gray-500">600519 | 5股</p>
+                </div>
+                <div class="text-right">
+                    <p class="font-medium price-up">1,789.00</p>
+                    <p class="text-xs price-up">+1.24% | 盈亏 +1,256</p>
+                </div>
+            </div>
+            
+            <div class="stock-item">
+                <div>
+                    <p class="font-medium">宁德时代</p>
+                    <p class="text-xs text-gray-500">300750 | 50股</p>
+                </div>
+                <div class="text-right">
+                    <p class="font-medium price-up">239.42</p>
+                    <p class="text-xs price-up">+2.87% | 盈亏 +2,478</p>
+                </div>
+            </div>
+            
+            <div class="stock-item">
+                <div>
+                    <p class="font-medium">中国平安</p>
+                    <p class="text-xs text-gray-500">601318 | 300股</p>
+                </div>
+                <div class="text-right">
+                    <p class="font-medium price-down">45.23</p>
+                    <p class="text-xs price-down">-0.62% | 盈亏 -621</p>
+                </div>
+            </div>
+            
+            <button class="btn-add mt-4">
+                <i class="fas fa-plus mr-1"></i> 添加股票
+            </button>
         </div>
     </div>
     
